@@ -13,7 +13,7 @@ export async function getServerSideProps() {
 }
 
 async function saveUser(user) {
-    const res = await fetch('/api/signup', {
+    const res = await fetch('/api/signin', {
         method: 'POST',
         body: JSON.stringify(user)
     })
@@ -26,7 +26,15 @@ async function saveUser(user) {
 }
 export default function Orders({ iniOrders }) {
     const [orders, setOrders] = useState(iniOrders)
+    /*
+        npm i -D prisma
+        npm i @prisma/client
+        npx prisma init
 
+        npx prisma migrate dev
+        npx prisma studio
+
+    */
     return (
         <main>
             {orders ?
@@ -38,7 +46,11 @@ export default function Orders({ iniOrders }) {
                 :
                 <div>Loading...</div>
             }
-            <button onClick={async (data, e) => {
+            <button onClick={async (e) => {
+                const data = {
+                    username: 'test',
+                    password: 'test2'
+                }
                 try {
                     await saveUser(data)
                     setOrders([...orders], data)

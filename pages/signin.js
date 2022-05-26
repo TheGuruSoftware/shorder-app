@@ -18,7 +18,7 @@ const Signin = () => {
                     <Input type="text" />
                     <label>Password</label>
                     <Input type="password" />
-                    <Button oclass="mt-3" icon={loading ? <Spinner /> : false}>Sign in</Button>
+                    <Button oclass="mt-3">{loading ? <Spinner /> : "Sign in"}</Button>
                 </fieldset>
             </form>
         </main>

@@ -20,7 +20,7 @@ const Signup = () => {
                     <Input type="password" />
                     <label>Repeat password</label>
                     <Input type="password" />
-                    <Button oclass="mt-3" icon={loading ? <Spinner /> : false}>Sign up</Button>
+                    <Button oclass="mt-3">{loading ? <Spinner /> : "Sign up"}</Button>
                 </fieldset>
             </form>
         </main>
