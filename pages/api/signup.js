@@ -1,7 +1,4 @@
-import { PrismaClient } from "@prisma/client"
-
-const prisma = new PrismaClient()
-
+import { prisma } from '../../prismaC'
 export default async (req, res) => {
     if (req.method !== 'POST') {
         res.status(405).json({ message: 'Method not allowed' })

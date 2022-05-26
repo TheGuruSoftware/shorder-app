@@ -1,7 +1,5 @@
 import { useState } from 'react'
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
+import { prisma } from '../prismaC'
 
 export async function getServerSideProps() {
     const orders = await prisma.user.findMany()
@@ -13,7 +11,7 @@ export async function getServerSideProps() {
 }
 
 async function saveUser(user) {
-    const res = await fetch('/api/signin', {
+    const res = await fetch('/api/signup', {
         method: 'POST',
         body: JSON.stringify(user)
     })
