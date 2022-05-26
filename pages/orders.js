@@ -2,6 +2,13 @@ import { useState } from 'react'
 import { prisma } from '../prismaC'
 
 export async function getServerSideProps() {
+    /*
+const user = await prisma.user.findUnique({
+  where: {
+    email: 'elsa@prisma.io',
+  },
+})
+    */
     const orders = await prisma.user.findMany()
     return {
         props: {
