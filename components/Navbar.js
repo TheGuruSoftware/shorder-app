@@ -1,10 +1,11 @@
 import Input from "./Input";
 import Link from "./Link";
+import Button from "./Button";
 import { useAuth } from "../auth";
 import { ClipboardListIcon, LoginIcon, HomeIcon, LogoutIcon, UserIcon } from "@heroicons/react/solid"
 import { useEffect } from 'react';
 const Navbar = () => {
-    const { user } = useAuth();
+    const { user, logoutUser } = useAuth();
     return (
         <nav className="bg-gray-200 min-h-screen p-2 border-r shadow-inner flex flex-col gap-2">
             <h2 className="text-lg font-bold text-gray-700 px-2 text-center">Shorder</h2>
@@ -29,7 +30,7 @@ const Navbar = () => {
                 <ul className="flex flex-col gap-1">
                     {user ? (
                         <li>
-                            <Link href="/logout" icon={<LogoutIcon className="w-5 h-5" />}>
+                            <Link button onClick={() => logoutUser()} oclass="w-100" icon={<LogoutIcon className="w-5 h-5" />}>
                                 Logout
                             </Link>
                         </li>
