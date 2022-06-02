@@ -50,6 +50,7 @@ export const AuthProvider = ({ children }) => {
         }
 
         const newUser = await res.json()
+        console.log(newUser)
         if (newUser) {
             router.push("/signin")
             alert("Konto utworzone. Możesz się zalogować")
