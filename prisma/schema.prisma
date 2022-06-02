@@ -15,3 +15,10 @@ model User {
   username String
   password String
 }
+
+model Image {
+  id     String @id @default(cuid())
+  url    String
+  userId String
+  likes  String
+}

@@ -5,12 +5,15 @@ export default async (req, res) => {
     }
 
     const userData = JSON.parse(req.body)
-    const savedUser = await prisma.user.create({
-        data: {
+    const user = await prisma.user.findFirst({
+        where: {
             username: userData.username,
             password: userData.password
         }
     })
-
-    res.json(savedUser)
+    if (user) {
+        res.status(200).json(user)
+        return
+    }
+    res.status(400).json({ message: 'User not found' })
 }
