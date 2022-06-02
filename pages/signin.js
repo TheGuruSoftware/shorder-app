@@ -13,12 +13,12 @@ const Signin = () => {
         e.preventDefault();
         setLoading(true);
         if (username.length < 3) {
-            alert('Username must be at least 3 characters long')
+            alert('Nazwa użytkownika musi mieć conajmniej 3 znaki')
             setLoading(false)
             return false
         }
         if (password.length < 3) {
-            alert('Password must be at least 3 characters long')
+            alert('Hasło musi mieć conajmniej 3 znaki')
             setLoading(false)
             return false
         }
@@ -27,21 +27,20 @@ const Signin = () => {
             e.target.reset()
             setLoading(false)
         } catch (err) {
-            console.error(err)
-            alert(err)
+            alert(err.message)
             setLoading(false)
         }
     }
     return (
         <main className="w-full">
             <form className="mx-auto max-w-xl mt-5 bg-gray-100 border rounded shadow p-3" onSubmit={handleSubmit}>
-                <h2 className="text-xl font-semibold border-b-2 w-fit pr-4">Sign in</h2>
+                <h2 className="text-xl font-semibold border-b-2 w-fit pr-4">Logowanie</h2>
                 <fieldset disabled={loading} className="flex flex-col gap-1 mt-3">
-                    <label>Username</label>
+                    <label>Nazwa użytkownika</label>
                     <Input type="text" onChange={e => setUsername(e.currentTarget.value)} />
-                    <label>Password</label>
+                    <label>Hasło</label>
                     <Input type="password" onChange={e => setPassword(e.currentTarget.value)} />
-                    <Button oclass="mt-3">{loading ? <Spinner /> : "Sign in"}</Button>
+                    <Button oclass="mt-3">{loading ? <Spinner /> : "Zaloguj się"}</Button>
                 </fieldset>
             </form>
         </main>

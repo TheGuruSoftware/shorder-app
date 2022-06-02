@@ -27,11 +27,12 @@ export const AuthProvider = ({ children }) => {
             body: JSON.stringify({ username: username, password: password })
         })
 
+        const newUser = await res.json()
+
         if (!res.ok) {
-            throw new Error(res.statusText)
+            throw new Error(await newUser.message || "Błąd")
         }
 
-        const newUser = await res.json()
         if (newUser) {
             setUser(newUser)
             localStorage.setItem('user', JSON.stringify(newUser))
@@ -50,7 +51,6 @@ export const AuthProvider = ({ children }) => {
         }
 
         const newUser = await res.json()
-        console.log(newUser)
         if (newUser) {
             router.push("/signin")
             alert("Konto utworzone. Możesz się zalogować")

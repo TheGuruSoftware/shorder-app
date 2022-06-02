@@ -1,0 +1,81 @@
+import { useState, useEffect } from 'react';
+import Image from 'next/image'
+import Link from 'next/link'
+import Spinner from '../components/Spinner'
+import Button from '../components/Button'
+
+const IMG = ({ id, url, author, alllikes, user }) => {
+    const [likes, setLikes] = useState(JSON.parse(alllikes || "{}"));
+    const [likeNumber, setLikeNumber] = useState(0);
+    const [liked, setLiked] = useState(0);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        setLikeNumber(Object.values(likes).reduce((a, b) => a + b, 0));
+        if (user) {
+            if (likes[user.id]) {
+                setLiked(likes[user.id]);
+            } else {
+                setLiked(0);
+            }
+        }
+    }, [likes]);
+
+    const handleLike = async (id, like) => {
+        const res = await fetch('/api/like', {
+            method: 'POST',
+            body: JSON.stringify({ id: id, userId: user.id, like: like }),
+        })
+
+        if (!res.ok) {
+            throw new Error(res.statusText)
+        }
+
+        const updated = await res.json()
+        if (updated) {
+            setLikes(updated)
+        } else {
+            alert("Błąd")
+        }
+    }
+    const handleClick = async (like) => {
+        setLoading(true);
+        try {
+            await handleLike(id, liked == like ? 0 : like);
+            setLoading(false);
+        } catch (err) {
+            alert(err)
+            setLoading(false)
+        }
+    }
+    return (
+        <div key={id} className="h-fit px-2 border shadow hover:shadow-md overflow-hidden rounded bg-gray-100">
+            <Link href={`/user/${author.id}`}>
+                <a className="font-semibold">@{author.username}</a>
+            </Link>
+            <Link href={`/image/${id}`}>
+                <a className="block aspect-square overflow-hidden relative">
+                    <Image src={url} layout="fill" objectFit="cover" className="rounded" priority={true} />
+                </a>
+            </Link>
+            <div className="my-1">
+                👍{likeNumber}
+            </div>
+            <div className="flex items-center mb-2 text-base gap-2">
+                {loading ?
+                    <div className="mx-auto">
+                        <Spinner className="w-5 h-5" />
+                    </div>
+                    : (user && (
+                        <>
+                            <Button oclass={`w-1/2 hover:border-l-8 border-red-400 ${liked == -1 && "text-red-600 border-x-2"}`} onClick={() => handleClick(-1)}>-</Button>
+                            <Button oclass={`w-1/2 hover:border-l-8 border-green-400 ${liked == 1 && "text-green-600 border-x-2"}`} onClick={() => handleClick(1)}>+</Button>
+                        </>
+                    ))}
+
+            </div>
+        </div>
+    );
+}
+
+export default IMG;
