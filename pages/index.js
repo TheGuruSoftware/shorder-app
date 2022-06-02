@@ -5,21 +5,10 @@ import IMG from '../components/IMG'
 import { useAuth } from '../auth'
 
 export async function getServerSideProps() {
-  if (prisma) {
-    const users = await prisma.user.findMany()
-    const images = await prisma.image.findMany()
-    return {
-      props: {
-        loadedImages: images || {},
-        loadedUsers: users || {},
-      }
-    }
-  } else {
-    return {
-      props: {
-        loadedImages: {},
-        loadedUsers: {},
-      }
+  return {
+    props: {
+      loadedImages: {},
+      loadedUsers: {},
     }
   }
 }
