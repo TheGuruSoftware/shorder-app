@@ -5,21 +5,19 @@ import Spinner from '../components/Spinner'
 import Button from '../components/Button'
 
 const IMG = ({ id, url, author, alllikes, user }) => {
-    const [likes, setLikes] = useState(JSON.parse(alllikes || "{}"));
+    const [likes, setLikes] = useState(alllikes || {});
     const [likeNumber, setLikeNumber] = useState(0);
-    const [liked, setLiked] = useState(0);
+    const [liked, setLiked] = useState(likes[user.id]);
     const [loading, setLoading] = useState(false);
-
     useEffect(() => {
         setLikeNumber(Object.values(likes).reduce((a, b) => a + b, 0));
-        if (user) {
-            if (likes[user.id]) {
-                setLiked(likes[user.id]);
-            } else {
-                setLiked(0);
-            }
-        }
     }, [likes]);
+    useEffect(() => {
+        if (user) {
+            setLiked(likes[user.id] || 0);
+        }
+    }, [likes, user]);
+
 
     const handleLike = async (id, like) => {
         const res = await fetch('/api/like', {
@@ -32,8 +30,8 @@ const IMG = ({ id, url, author, alllikes, user }) => {
         }
 
         const updated = await res.json()
-        if (updated) {
-            setLikes(updated)
+        if (updated.updated) {
+            setLikes(updated.updated.likes)
         } else {
             alert("Błąd")
         }

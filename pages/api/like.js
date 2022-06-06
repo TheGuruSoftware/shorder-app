@@ -1,15 +1,12 @@
-import { prisma } from '../../prismaC'
+import { getImageFromId, updateLikes } from "../../sb"
+
 export default async (req, res) => {
     if (req.method !== 'POST') {
         res.status(405).json({ message: 'Method not allowed' })
     }
 
     const data = JSON.parse(req.body)
-    const old = await prisma.image.findUnique({
-        where: {
-            id: data.id
-        }
-    })
+    const old = await getImageFromId(data.id)
     if (!old) {
         res.status(404).json({ message: 'Image not found' })
     }
@@ -20,13 +17,6 @@ export default async (req, res) => {
     } else {
         delete newLikes[data.userId]
     }
-    const updated = await prisma.image.update({
-        where: {
-            id: data.id
-        },
-        data: {
-            likes: JSON.stringify(newLikes)
-        }
-    })
-    res.json(newLikes)
+    const updated = await updateLikes(data.id, newLikes)
+    res.status(200).json({ updated: updated })
 }

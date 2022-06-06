@@ -27,15 +27,16 @@ export const AuthProvider = ({ children }) => {
             body: JSON.stringify({ username: username, password: password })
         })
 
-        const newUser = await res.json()
-
         if (!res.ok) {
-            throw new Error(await newUser.message || "Błąd")
+            const err = await res.json()
+            throw new Error(await err.message)
         }
 
-        if (newUser) {
-            setUser(newUser)
-            localStorage.setItem('user', JSON.stringify(newUser))
+        const newUser = await res.json()
+
+        if (newUser.user) {
+            setUser(newUser.user)
+            localStorage.setItem('user', JSON.stringify(newUser.user))
             router.push('/')
         }
     }
@@ -45,16 +46,12 @@ export const AuthProvider = ({ children }) => {
             method: 'POST',
             body: JSON.stringify({ username: username, password: password })
         })
-
         if (!res.ok) {
-            throw new Error(res.statusText)
+            const err = await res.json()
+            throw new Error(await err.message)
         }
-
-        const newUser = await res.json()
-        if (newUser) {
-            router.push("/signin")
-            alert("Konto utworzone. Możesz się zalogować")
-        }
+        router.push("/signin")
+        alert("Konto utworzone. Możesz się zalogować")
     }
 
     function logoutUser() {

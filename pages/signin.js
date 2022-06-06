@@ -27,7 +27,7 @@ const Signin = () => {
             e.target.reset()
             setLoading(false)
         } catch (err) {
-            alert(err.message)
+            alert(err)
             setLoading(false)
         }
     }

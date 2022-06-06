@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 const Navbar = () => {
     const { user, logoutUser } = useAuth();
     return (
-        <nav className="bg-gray-200 min-h-screen p-2 border-r shadow-inner flex flex-col gap-2">
+        <nav className="bg-gray-200 h-screen p-2 border-r shadow-inner flex flex-col gap-2">
             <h2 className="text-lg font-bold text-gray-700 px-2 text-center">Portal graficzny</h2>
             <div>
                 <Input type="text" placeholder={user ? user.username : "Szukaj"} />

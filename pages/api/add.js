@@ -1,19 +1,11 @@
-import { prisma } from '../../prismaC'
-import moment from "moment"
+import { createImage } from "../../sb"
 export default async (req, res) => {
     if (req.method !== 'POST') {
         res.status(405).json({ message: 'Method not allowed' })
+        return
     }
-
     const data = JSON.parse(req.body)
-    const q = await prisma.image.create({
-        data: {
-            url: data.url,
-            userId: data.userId,
-            added: moment().format('YYYY-MM-DD HH:mm:ss'),
-            likes: ""
-        }
-    })
+    const created = await createImage(data.userId, data.url)
 
-    res.json(q)
+    res.status(200).json({ message: 'User created', newUser: created })
 }
