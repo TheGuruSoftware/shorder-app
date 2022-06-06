@@ -17,7 +17,7 @@ const ImagePage = ({ data, author }) => {
     return (
         <main className="p-2 text-sm">
             <table>
-                <tbody className>
+                <tbody>
                     <tr>
                         <td className="font-semibold pr-2">
                             Autor
@@ -32,6 +32,14 @@ const ImagePage = ({ data, author }) => {
                         </td>
                         <td className="pl-2">
                             {moment(data.created_at).format('LLLL')}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td className="font-semibold  pr-2">
+                            Reakcje
+                        </td>
+                        <td className="pl-2">
+                            {Object.values(data.likes).reduce((a, b) => a + b, 0)}
                         </td>
                     </tr>
                 </tbody>
