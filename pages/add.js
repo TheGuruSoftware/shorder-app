@@ -4,12 +4,12 @@ import Input from '../components/Input';
 import Button from '../components/Button';
 import Spinner from '../components/Spinner'
 import { useRouter } from 'next/router'
-import moment from 'moment'
 
 
 export default function Add() {
     const [loading, setLoading] = useState(false);
     const [url, setUrl] = useState('');
+    const [description, setDescription] = useState('');
 
     const router = useRouter()
     const { user } = useAuth()
@@ -17,7 +17,7 @@ export default function Add() {
     const addNewImage = async (url, id) => {
         const res = await fetch('/api/add', {
             method: 'POST',
-            body: JSON.stringify({ url: url, userId: id })
+            body: JSON.stringify({ url: url, userId: id, description: description }),
         })
 
         if (!res.ok) {
@@ -42,6 +42,16 @@ export default function Add() {
             setLoading(false)
             return false
         }
+        if (!(url.includes('http://') || url.includes('https://'))) {
+            alert('URL musi zaczynać się od http:// lub https://')
+            setLoading(false)
+            return false
+        }
+        if (description.length > 150) {
+            alert('Opis jest zbyt długi (max 150 znaków)')
+            setLoading(false)
+            return false
+        }
         try {
             await addNewImage(url, user.id)
             e.target.reset()
@@ -52,12 +62,14 @@ export default function Add() {
         }
     }
     return (
-        <main className="w-full">
+        <main className="w-full container">
             <form className="mx-auto max-w-xl mt-5 bg-gray-100 border rounded shadow p-3" onSubmit={handleSubmit}>
                 <h2 className="text-xl font-semibold border-b-2 w-fit pr-4">Dodaj grafikę</h2>
                 <fieldset disabled={loading} className="flex flex-col gap-1 mt-3">
                     <label>URL</label>
                     <Input type="text" onChange={e => setUrl(e.currentTarget.value)} />
+                    <label>Opis</label>
+                    <Input type="text" onChange={e => setDescription(e.currentTarget.value)} maxLength={150} />
                     <Button oclass="mt-3">{loading ? <Spinner /> : "Dodaj"}</Button>
                 </fieldset>
             </form>

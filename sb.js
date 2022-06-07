@@ -47,10 +47,10 @@ export async function createUser(username, password) {
         .insert([{ username: username, password: password }])
     return data
 }
-export async function createImage(userId, url) {
+export async function createImage(userId, url, description) {
     const { data } = await supabaseAdmin
         .from('images')
-        .insert([{ author: userId, url: url }])
+        .insert([{ author: userId, url: url, description: description }])
     return data
 }
 

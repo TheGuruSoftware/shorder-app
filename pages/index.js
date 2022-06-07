@@ -3,6 +3,8 @@ import Spinner from '../components/Spinner'
 import IMG from '../components/IMG'
 import { useAuth } from '../auth'
 import { getImages, getUsers } from '../sb'
+import moment from 'moment'
+import "moment/locale/pl"
 
 export async function getServerSideProps() {
   const users = await getUsers()
@@ -27,7 +29,7 @@ export default function Home({ loadedUsers, loadedImages }) {
   return (
     <main className="text-sm p-4 grid xs:grid-cols-1 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 w-full h-fit">
       {images.length && images.map(image => (
-        <IMG key={image.id} author={users.find(u => u.id === image.author)} url={image.url} id={image.id} alllikes={image.likes} user={user} />
+        <IMG key={image.id} author={users.find(u => u.id === image.author)} url={image.url} id={image.id} alllikes={image.likes} user={user} description={image.description || moment(image.created_at).format("LLLL")} />
       ))}
     </main>
   )

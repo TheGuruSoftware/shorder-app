@@ -1,17 +1,18 @@
 import Input from "./Input";
 import Link from "./Link";
-import Button from "./Button";
 import { useAuth } from "../auth";
 import { PlusIcon, LoginIcon, HomeIcon, LogoutIcon, UserIcon } from "@heroicons/react/solid"
-import { useEffect } from 'react';
 const Navbar = () => {
     const { user, logoutUser } = useAuth();
     return (
-        <nav className="bg-gray-200 p-2 border-r shadow-inner flex flex-col gap-2 h-fit sm:h-screen">
+        <nav className="bg-gray-200 p-2 border-r shadow-inner flex flex-col gap-2 h-fit sm:h-screen min-w-max">
             <h2 className="text-lg font-bold text-gray-700 px-2 text-center">Portal graficzny</h2>
-            <div>
-                <Input type="text" placeholder={user ? user.username : "Szukaj"} oclass="w-full" />
-            </div>
+            {user &&
+                <div className="bg-gray-300 rounded shadow px-1 font-semibold text-center">
+                    {user.username}
+                </div>
+            }
+            {/*<Input type="text" placeholder={user ? user.username : "Szukaj"} oclass="w-full" />*/}
             <div>
                 <ul className="flex flex-col gap-1">
                     <li>

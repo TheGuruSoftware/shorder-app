@@ -5,7 +5,7 @@ export default async (req, res) => {
         return
     }
     const data = JSON.parse(req.body)
-    const created = await createImage(data.userId, data.url)
+    const created = await createImage(data.userId, data.url, data.description)
 
-    res.status(200).json({ message: 'User created', newUser: created })
+    res.status(200).json({ message: 'User created' })
 }

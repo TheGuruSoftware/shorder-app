@@ -3,6 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import Spinner from '../components/Spinner'
 import Button from '../components/Button'
+import { imageConfigDefault } from 'next/dist/shared/lib/image-config';
 
 const IMG = ({ id, url, author, alllikes, user, description }) => {
     const [likes, setLikes] = useState(alllikes || {});
@@ -48,18 +49,20 @@ const IMG = ({ id, url, author, alllikes, user, description }) => {
         }
     }
     return (
-        <div key={id} className="transition h-fit px-2 border shadow hover:shadow-md overflow-hidden rounded bg-gray-100" >
+        <div key={id} className="h-fit px-2 border shadow hover:shadow-md overflow-hidden rounded bg-gray-100" onMouseEnter={() => setShowDescription(true)} onMouseLeave={() => setShowDescription(false)} >
             <Link href={`/user/${author.id}`}>
                 <a className="font-semibold">@{author.username}</a>
             </Link>
             <Link href={`/image/${id}`}>
-                <a className="block aspect-square overflow-hidden relative" onMouseEnter={() => setShowDescription(true)} onMouseLeave={() => setShowDescription(false)}>
-                    <Image src={url} layout="fill" objectFit="cover" className="rounded" priority={true} />
-                    <div className={`overflow-hidden w-full h-fit bg-white/50 backdrop-blur p-1 text-black transition duration-300 ease-in-out ${showDescription ? "translate-y-0 opacity-1" : "translate-y-full opacity-0"}`}>
+                {showDescription ? (
+                    <div className="aspect-square overflow-hidden relative bg-white/25 backdrop-blur">
                         {description}
                     </div>
-
-                </a>
+                ) : (
+                    <a className="block aspect-square overflow-hidden relative">
+                        <Image src={url} layout="fill" objectFit="cover" className="rounded" priority={true} />
+                    </a>
+                )}
             </Link>
             <div className="my-1">
                 👍{likeNumber}
