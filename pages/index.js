@@ -25,7 +25,7 @@ export default function Home({ loadedUsers, loadedImages }) {
     </div>
   )
   return (
-    <main className="text-sm p-4 grid xs:grid-cols-1 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 w-full">
+    <main className="text-sm p-4 grid xs:grid-cols-1 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 w-full h-fit">
       {images.length && images.map(image => (
         <IMG key={image.id} author={users.find(u => u.id === image.author)} url={image.url} id={image.id} alllikes={image.likes} user={user} />
       ))}

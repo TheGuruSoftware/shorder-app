@@ -7,10 +7,10 @@ import { useEffect } from 'react';
 const Navbar = () => {
     const { user, logoutUser } = useAuth();
     return (
-        <nav className="bg-gray-200 h-screen p-2 border-r shadow-inner flex flex-col gap-2">
+        <nav className="bg-gray-200 p-2 border-r shadow-inner flex flex-col gap-2 h-fit sm:h-screen">
             <h2 className="text-lg font-bold text-gray-700 px-2 text-center">Portal graficzny</h2>
             <div>
-                <Input type="text" placeholder={user ? user.username : "Szukaj"} />
+                <Input type="text" placeholder={user ? user.username : "Szukaj"} oclass="w-full" />
             </div>
             <div>
                 <ul className="flex flex-col gap-1">
@@ -30,7 +30,7 @@ const Navbar = () => {
                 <ul className="flex flex-col gap-1">
                     {user ? (
                         <li>
-                            <Link button onClick={() => logoutUser()} oclass="w-100" icon={<LogoutIcon className="w-5 h-5" />}>
+                            <Link button onClick={() => logoutUser()} oclass="w-full sm:mb-5" icon={<LogoutIcon className="w-5 h-5" />}>
                                 Wyloguj się
                             </Link>
                         </li>
