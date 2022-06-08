@@ -1,6 +1,7 @@
-import { useRouter } from 'next/router';
 import { getImageFromId, getUserFromId } from '../../sb';
+import Link from 'next/link';
 import moment from 'moment';
+import Image from 'next/image';
 import "moment/locale/pl"
 export async function getServerSideProps(context) {
     const { id } = context.params;
@@ -15,7 +16,24 @@ export async function getServerSideProps(context) {
 }
 const ImagePage = ({ data, author }) => {
     return (
-        <main className="p-2 text-sm">
+        <main className="text-sm w-full h-screen">
+            <div className="flex justify-between w-full p-2">
+                <div className="font-semibold text-base">
+                    <Link href={`/user/${author.id}`}>
+                        <a>
+                            @{author.username}
+                        </a>
+                    </Link>
+                </div>
+                <div>
+                    {moment(data.created_at).format('LLLL')}
+                </div>
+            </div>
+            <div className="w-full border-y h-3/4 py-2 bg-gray-100">
+                <div className="relative aspect-square h-full mx-auto my-auto">
+                    <Image src={data.url} alt={data.description} layout="fill" objectFit="cover" className="rounded" priority={true} />
+                </div>
+            </div>
             <table>
                 <tbody>
                     <tr>
