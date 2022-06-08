@@ -24,23 +24,22 @@ export async function getUserFromId(id) {
         .from('users')
         .select('*')
         .eq('id', id)
-    return data
+    return data[0]
 }
 export async function getImageFromId(id) {
     const { data } = await supabaseAdmin
         .from('images')
         .select('*')
         .eq('id', id)
-    return data
+    return data[0]
 }
 export async function getUserFromUsername(username) {
     const { data } = await supabaseAdmin
         .from('users')
         .select('*')
         .eq('username', username)
-    return data
+    return data[0]
 }
-
 export async function createUser(username, password) {
     const { data } = await supabaseAdmin
         .from('users')
@@ -50,7 +49,7 @@ export async function createUser(username, password) {
 export async function createImage(userId, url, description) {
     const { data } = await supabaseAdmin
         .from('images')
-        .insert([{ author: userId, url: url, description: description }])
+        .insert([{ author: userId, url: url, description: description, comments: { "9": "asdasdasd komentarz", "10": "Komentzrz 2" } }])
     return data
 }
 

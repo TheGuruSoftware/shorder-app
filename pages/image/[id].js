@@ -1,20 +1,38 @@
-import { getImageFromId, getUserFromId } from '../../sb';
+import { getImageFromId, getUserFromId, getUsers } from '../../sb';
 import Link from 'next/link';
 import moment from 'moment';
 import Image from 'next/image';
 import "moment/locale/pl"
+import { useState, useEffect } from 'react';
 export async function getServerSideProps(context) {
     const { id } = context.params;
     const data = await getImageFromId(id)
-    const author = await getUserFromId(data[0].author)
+    const author = await getUserFromId(data.author)
+    const users = await getUsers()
     return {
         props: {
-            data: data[0] || {},
-            author: author[0] || {}
+            data: data || {},
+            author: author || {},
+            users: users || {}
         }
     }
 }
-const ImagePage = ({ data, author }) => {
+const ImagePage = ({ data, author, users }) => {
+    const [comments, setComments] = useState([]);
+    useEffect(() => {
+        if (data.comments) {
+            if (Object.keys(data.comments).length > 0) {
+
+                let newComments = []
+                Object.keys(data.comments).forEach(key => {
+                    newComments.push({ user: users.find(u => u.id == key), text: data.comments[key] })
+                })
+                setComments(newComments)
+            }
+            else
+                setComments([])
+        }
+    }, [data, users])
     return (
         <main className="text-sm w-full h-screen">
             <div className="flex justify-between w-full p-2">
@@ -34,34 +52,38 @@ const ImagePage = ({ data, author }) => {
                     <Image src={data.url} alt={data.description} layout="fill" objectFit="cover" className="rounded" priority={true} />
                 </div>
             </div>
-            <table>
-                <tbody>
-                    <tr>
-                        <td className="font-semibold pr-2">
-                            Autor
-                        </td>
-                        <td className="pl-2">
-                            {author.username}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td className="font-semibold  pr-2">
-                            Dodano
-                        </td>
-                        <td className="pl-2">
-                            {moment(data.created_at).format('LLLL')}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td className="font-semibold  pr-2">
-                            Reakcje
-                        </td>
-                        <td className="pl-2">
-                            {Object.values(data.likes).reduce((a, b) => a + b, 0)}
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div className='px-2'>
+                {data.description}
+            </div>
+            <div className="flex gap-3 px-2">
+                <div>
+                    👍 {Object.values(data.likes).reduce((a, b) => a + b, 0)}
+                </div>
+                <div>
+                    ({Object.keys(data.likes).length})
+                </div>
+            </div>
+            <div className="px-2 border-y">
+                <span className="font-semibold">Komentarze</span>
+                <table>
+                    <tbody>
+                        {comments.length > 0 && comments.map(c => (
+                            <tr key={c.user.id} className="border-b last:border-none">
+                                <td className="font-semibold pr-2">
+                                    <Link href={`/user/${c.user.id}`}>
+                                        <a>
+                                            @{c.user.username}
+                                        </a>
+                                    </Link>
+                                </td>
+                                <td>
+                                    {c.text}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </main>
     );
 }
