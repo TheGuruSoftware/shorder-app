@@ -2,8 +2,10 @@ import { getImageFromId, getUserFromId, getUsers } from '../../sb';
 import Link from 'next/link';
 import moment from 'moment';
 import Image from 'next/image';
+import Button from '../../components/Button';
 import "moment/locale/pl"
 import { useState, useEffect } from 'react';
+import { useAuth } from '../../auth';
 export async function getServerSideProps(context) {
     const { id } = context.params;
     const data = await getImageFromId(id)
@@ -19,6 +21,11 @@ export async function getServerSideProps(context) {
 }
 const ImagePage = ({ data, author, users }) => {
     const [comments, setComments] = useState([]);
+    const [likes, setLikes] = useState(data.likes || {});
+    const [liked, setLiked] = useState(false);
+    const [likeNumber, setLikeNumber] = useState(0);
+    const [loading, setLoading] = useState(false);
+    const { user } = useAuth();
     useEffect(() => {
         if (data.comments) {
             if (Object.keys(data.comments).length > 0) {
@@ -32,7 +39,42 @@ const ImagePage = ({ data, author, users }) => {
             else
                 setComments([])
         }
+        if (likes)
+            setLikeNumber(Object.values(likes).reduce((a, b) => a + b, 0));
     }, [data, users])
+    useEffect(() => {
+        if (user) {
+            setLiked(likes[user.id] || 0);
+        }
+        setLikeNumber(Object.values(likes).reduce((a, b) => a + b, 0));
+    }, [likes, user])
+
+    const handleLike = async (like) => {
+        setLoading(true);
+        try {
+            const res = await fetch('/api/like', {
+                method: 'POST',
+                body: JSON.stringify({ id: data.id, userId: user.id, like: liked == like ? 0 : like }),
+            })
+
+            if (!res.ok) {
+                throw new Error(res.statusText)
+            }
+
+            const updated = await res.json()
+            console.log(await updated)
+            if (updated) {
+                setLikes(updated.likes)
+            } else {
+                alert("Błąd")
+            }
+            setLoading(false);
+        } catch (err) {
+            alert(err)
+            setLoading(false)
+        }
+    }
+
     return (
         <main className="text-sm w-full h-screen">
             <div className="flex justify-between w-full p-2">
@@ -47,24 +89,31 @@ const ImagePage = ({ data, author, users }) => {
                     {moment(data.created_at).format('LLLL')}
                 </div>
             </div>
-            <div className="w-full border-y h-3/4 py-2 bg-gray-100">
+            <div className="sm:h-3/4 p-2 bg-gray-100 border-y">
                 <div className="relative aspect-square h-full mx-auto my-auto">
                     <Image src={data.url} alt={data.description} layout="fill" objectFit="cover" className="rounded" priority={true} />
                 </div>
             </div>
-            <div className='px-2'>
+            <div className='px-2 mt-1'>
                 {data.description}
             </div>
-            <div className="flex gap-3 px-2">
+            <div className="flex px-2 w-1/2 gap-3 mb-2 mt-1">
                 <div>
-                    👍 {Object.values(data.likes).reduce((a, b) => a + b, 0)}
+                    👍 {likeNumber}
                 </div>
                 <div>
                     ({Object.keys(data.likes).length})
                 </div>
+                <div className="flex w-24">
+                    <Button oclass={`w-1/2 hover:border-l-8 border-red-400 ${liked == -1 && "text-red-600 border-x-2"}`} onClick={() => handleLike(-1)}>-</Button>
+                    <Button oclass={`w-1/2 hover:border-l-8 border-green-400 ${liked == 1 && "text-green-600 border-x-2"}`} onClick={() => handleLike(1)}>+</Button>
+                </div>
             </div>
-            <div className="px-2 border-y">
-                <span className="font-semibold">Komentarze</span>
+            <div className="p-2 border-y">
+                <div className="flex gap-3">
+                    <div className="font-semibold my-auto">Komentarze</div>
+                    <Button>Skomentuj</Button>
+                </div>
                 <table>
                     <tbody>
                         {comments.length > 0 && comments.map(c => (

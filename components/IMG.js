@@ -31,8 +31,8 @@ const IMG = ({ id, url, author, alllikes, user, description }) => {
         }
 
         const updated = await res.json()
-        if (updated.updated) {
-            setLikes(updated.updated.likes)
+        if (updated) {
+            setLikes(updated.likes)
         } else {
             alert("Błąd")
         }

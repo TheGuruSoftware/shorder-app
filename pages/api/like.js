@@ -11,12 +11,12 @@ export default async (req, res) => {
         res.status(404).json({ message: 'Image not found' })
     }
 
-    let newLikes = JSON.parse(old.likes || "{}")
+    let newLikes = old.likes
     if (data.like != 0) {
         newLikes[data.userId] = data.like
     } else {
         delete newLikes[data.userId]
     }
     const updated = await updateLikes(data.id, newLikes)
-    res.status(200).json({ updated: updated })
+    res.status(200).json(updated)
 }
