@@ -6,6 +6,7 @@ import Button from '../../components/Button';
 import "moment/locale/pl"
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../auth';
+import Input from '../../components/Input';
 export async function getServerSideProps(context) {
     const { id } = context.params;
     const data = await getImageFromId(id)
@@ -20,25 +21,14 @@ export async function getServerSideProps(context) {
     }
 }
 const ImagePage = ({ data, author, users }) => {
-    const [comments, setComments] = useState([]);
+    const [comments, setComments] = useState(data.comments || []);
     const [likes, setLikes] = useState(data.likes || {});
     const [liked, setLiked] = useState(false);
     const [likeNumber, setLikeNumber] = useState(0);
     const [loading, setLoading] = useState(false);
+    const [comment, setComment] = useState('');
     const { user } = useAuth();
     useEffect(() => {
-        if (data.comments) {
-            if (Object.keys(data.comments).length > 0) {
-
-                let newComments = []
-                Object.keys(data.comments).forEach(key => {
-                    newComments.push({ user: users.find(u => u.id == key), text: data.comments[key] })
-                })
-                setComments(newComments)
-            }
-            else
-                setComments([])
-        }
         if (likes)
             setLikeNumber(Object.values(likes).reduce((a, b) => a + b, 0));
     }, [data, users])
@@ -75,6 +65,32 @@ const ImagePage = ({ data, author, users }) => {
         }
     }
 
+    const handleComment = async () => {
+        setLoading(true);
+        try {
+            const res = await fetch('/api/comment', {
+                method: 'POST',
+                body: JSON.stringify({ id: data.id, author: user.id, text: comment }),
+            })
+
+            if (!res.ok) {
+                throw new Error(res.statusText)
+            }
+
+            const updated = await res.json()
+            console.log(await updated)
+            if (updated) {
+                setComments(updated)
+            } else {
+                alert("Błąd")
+            }
+            setLoading(false);
+        } catch (err) {
+            alert(err)
+            setLoading(false)
+        }
+    }
+    let x = 0;
     return (
         <main className="text-sm w-full h-screen">
             <div className="flex justify-between w-full p-2">
@@ -112,28 +128,38 @@ const ImagePage = ({ data, author, users }) => {
             <div className="p-2 border-y">
                 <div className="flex gap-3">
                     <div className="font-semibold my-auto">Komentarze</div>
-                    <Button>Skomentuj</Button>
+                    <Input type="text" placeholder="Wpisz komentarz..." onChange={e => setComment(e.currentTarget.value)} />
+                    <Button onClick={handleComment}>Skomentuj</Button>
                 </div>
                 <table>
                     <tbody>
-                        {comments.length > 0 && comments.map(c => (
-                            <tr key={c.user.id} className="border-b last:border-none">
-                                <td className="font-semibold pr-2">
-                                    <Link href={`/user/${c.user.id}`}>
-                                        <a>
-                                            @{c.user.username}
-                                        </a>
-                                    </Link>
-                                </td>
-                                <td>
-                                    {c.text}
-                                </td>
-                            </tr>
-                        ))}
+                        {comments.length > 0 && comments.sort(function (a, b) {
+                            return new Date(b.createdAt) - new Date(a.createdAt);
+                        }).map(c => {
+                            x++
+                            const author = users.find(user => user.id == c.author)
+                            return (
+                                <tr key={x} className="border-b last:border-none" >
+                                    <td className="font-semibold pr-2">
+                                        <Link href={`/user/${c.author}`}>
+                                            <a>
+                                                @{author.username}
+                                            </a>
+                                        </Link>
+                                    </td>
+                                    <td className="pr-2">
+                                        {c.text}
+                                    </td>
+                                    <td className="text-xs text-gray-500 font-normal italic font-light">
+                                        {moment(c.createdAt).fromNow()}
+                                    </td>
+                                </tr>
+                            )
+                        })}
                     </tbody>
                 </table>
             </div>
-        </main>
+        </main >
     );
 }
 

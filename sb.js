@@ -47,9 +47,10 @@ export async function createUser(username, password) {
     return data
 }
 export async function createImage(userId, url, description) {
+    const now = new Date()
     const { data } = await supabaseAdmin
         .from('images')
-        .insert([{ author: userId, url: url, description: description, comments: { "9": "asdasdasd komentarz", "10": "Komentzrz 2" } }])
+        .insert([{ author: userId, url: url, description: description, comments: [{ author: "9", text: "Komentarz od id 9", createdAt: now }, { author: "10", text: "Komentarz od id 10", createdAt: now }] }])
     return data
 }
 
@@ -59,4 +60,12 @@ export async function updateLikes(id, likes) {
         .update({ likes: likes })
         .eq('id', id)
     return data[0]
+}
+
+export async function updateComments(id, comments) {
+    const { data } = await supabaseAdmin
+        .from('images')
+        .update({ comments: comments })
+        .eq('id', id)
+    return data[0].comments
 }
